@@ -3,7 +3,7 @@
 # Shared cache: disabled
 # Workspace root: /home/ryota/OCaml/gitp
 # Auto-detected concurrency: 4
-$ /home/ryota/OCaml/_opam/bin/ocamlc.opt -config > /tmp/dune_ecf9bb_output
+$ /home/ryota/OCaml/_opam/bin/ocamlc.opt -config > /tmp/dune_929290_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
