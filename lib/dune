@@ -1,0 +1,3 @@
+(library
+ (name gitp)
+ (libraries git git-unix cmdliner))

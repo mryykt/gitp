@@ -1,0 +1,8 @@
+lib: [
+  "_build/install/default/lib/gitp/META"
+  "_build/install/default/lib/gitp/dune-package"
+  "_build/install/default/lib/gitp/opam"
+]
+bin: [
+  "_build/install/default/bin/gitp"
+]
