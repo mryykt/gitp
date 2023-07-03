@@ -65,17 +65,47 @@ module Command=struct
       let info=Cmd.info "ls" in
       Cmd.v info Term.(const (fun c p->Lwt_main.run Lwt.Infix.(f c p>|= out Fmt.stdout)) $ cid $ file)
   end
-
+(*
   module Save=struct
+    let read_all ()=
+      let rec sub l=
+        let line,eof=try read_line (),false with End_of_file->"",true in
+        if eof then l
+        else sub (l^"\n"^line)
+    in sub ""
+
     let sub=
-      let f d=print_endline d in
-      let file=
-        Arg.(value & pos 0 string "" & info [] ~docv:"FILE" ~doc:"file name") in
-      let info=Cmd.info "save" in
+      let f file=
+        let data=read_all () in
+        let blob=Git.Blob.of_string data in
+        let path=split_path file in
+        let open Lwt_result.Syntax in
+        let* store=get_store() in
+        let* cid=get_latest_commit store in
+        let open Lwt.Syntax in
+        let* hash=find_blob store cid (split_path @@ Filename.dirname file) in
+        let* tree=match hash with
+          |Some h->Store.read store h
+          |None->Lwt.return (Error (`Not_found cid)) in
+        let* new_tree=match tree with
+          |Ok (Git.Value.Tree t)->
+            t
+            |> Git.Tree.remove ~name:(Filename.basename file)
+            |> Git.Tree.add (Git.Tree.entry ~name:(Filename.basename file) `Normal (Git.Blob.digest blob))
+            |>Lwt_result.return
+          |_->Lwt.return (Error (`Not_found cid)) in
+        print_endline data
+      in let file=
+        Arg.(value & pos 0 string "" & info [] ~docv:"FILE" ~doc:"file name")
+      in let info=Cmd.info "save" in
       Cmd.v info Term.(const f $ file)
   end
+  *)
+
+module Log=struct
+end
 
   let main ()=
     let info=Cmd.info "gitp" in
-    Cmd.group info [Cat.sub;Ls.sub;Save.sub] |> Cmd.eval
+    Cmd.group info [Cat.sub;Ls.sub;] |> Cmd.eval
 end
